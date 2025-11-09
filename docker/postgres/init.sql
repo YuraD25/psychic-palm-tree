@@ -1,0 +1,1 @@
+ALTER DATABASE loans SET timezone TO 'UTC';

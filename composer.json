@@ -1,0 +1,41 @@
+{
+    "name": "loan-application/api",
+    "description": "Loan Application API with Clean Architecture",
+    "type": "project",
+    "require": {
+        "php": ">=8.3",
+        "yiisoft/yii2": "~2.0.45",
+        "yiisoft/yii2-composer": "~2.0.4"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "~2.2.0",
+        "phpunit/phpunit": "^9.0",
+        "zircote/swagger-php": "^4.0"
+    },
+    "config": {
+        "process-timeout": 1800,
+        "fxp-asset": {
+            "enabled": false
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
