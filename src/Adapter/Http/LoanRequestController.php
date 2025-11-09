@@ -60,9 +60,9 @@ class LoanRequestController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['userId', 'amount', 'term'],
+                required: ['user_id', 'amount', 'term'],
                 properties: [
-                    new OA\Property(property: 'userId', type: 'integer', example: 1),
+                    new OA\Property(property: 'user_id', type: 'integer', example: 1),
                     new OA\Property(property: 'amount', type: 'number', format: 'float', example: 10000.00),
                     new OA\Property(property: 'term', type: 'integer', example: 12)
                 ]

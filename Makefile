@@ -1,8 +1,8 @@
-.PHONY: build up down logs shell migrate test deploy deploy-prod init-db clean swagger
+.PHONY: build up down logs shell migrate test clean swagger
 
 # Build and start containers
 build:
-	docker-compose up --build -d
+	docker-compose up --build -d && sleep 5 && docker-compose exec php-fpm php yii migrate --interactive=0
 
 # Start containers
 up:
@@ -34,14 +34,6 @@ swagger:
 	@command -v open >/dev/null 2>&1 && open http://localhost/swagger || \
 	 command -v xdg-open >/dev/null 2>&1 && xdg-open http://localhost/swagger || \
 	 echo "Please open http://localhost/swagger in your browser"
-
-# Deploy application (development)
-deploy:
-	./scripts/deploy.sh
-
-# Initialize database
-init-db:
-	./scripts/init-database.sh
 
 # Clean up everything
 clean:
