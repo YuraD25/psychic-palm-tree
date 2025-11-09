@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: loan-app-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./web:/var/www/html/web
+    depends_on:
+      php-fpm:
+        condition: service_healthy
+    networks:
+      - loan-app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: loan-app-php
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    environment:
+      - YII_ENV=dev
+      - YII_DEBUG=1
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_NAME=loans
+      - DB_USER=user
+      - DB_PASSWORD=password
+    networks:
+      - loan-app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgresql:
+    image: postgres:15-alpine
+    container_name: loan-app-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: loans
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - loan-app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d loans"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+networks:
+  loan-app-network:
+    driver: bridge
